@@ -34,19 +34,22 @@ class BonjourDiscovery():
                     type = info.properties[b'type']
                     if type == b'nordinbeacon':
                         #get ip/port of printer
-                        addresses = ["%s:%d" % (socket.inet_ntoa(addr), cast(int, info.port)) for addr in info.addresses]
+                        addresses = ["%s" % (socket.inet_ntoa(addr)) for addr in info.addresses]
+                        port = [(cast(int, info.port)) for addr in info.addresses]
+                        #"%d" %
                         #get printer info
                         hostname = info.properties[b'name'].decode('UTF-8')
                         series = info.properties[b'series'].decode('UTF-8')
                         version = info.properties[b'version'].decode('UTF-8')
                         #add printers to dictionary
-                        printerInfo = {"address": addresses[0], "series": series, "version": version}
+                        printerInfo = {"address": addresses[0], "stat": -1, "port": port[0], "series": series, "version": version}
                         self.services[name] = hostname
                         self.printers[hostname] = printerInfo
                         #print data
                         print("{}: {} at {}".format(state_change, hostname, addresses))
                         print("    Hardware Series:{}".format(series))
                         print("    Hardware Version:{}".format(version))
+                        self.checkPrinterStatus()
                 except KeyError:
                     pass
                         
@@ -64,6 +67,31 @@ class BonjourDiscovery():
             info = self.zeroconf.get_service_info("_http._tcp.local.", key)
             self.zeroconf.unregister_service(info)
             
+    def checkPrinterStatus(self):
+        for printer in list(self.printers):
+            a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            rpi_port = (self.printers[printer]["address"], 22)
+            rpi_up = a_socket.connect_ex(rpi_port)
+            a_socket.close()
+
+            if rpi_up == 0:
+               #print("Port is open")
+               a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+               server_port = (self.printers[printer]["address"], self.printers[printer]["port"])
+               server_up = a_socket.connect_ex(server_port)
+               a_socket.close()
+
+               if server_up == 0:
+                  #print("Server is up")
+                  self.printers[printer]["stat"] = 2
+               else:
+                  #print("Server is down")
+                  self.printers[printer]["stat"] = 1
+            else:
+               #print("Port is not open")
+               self.printers[printer]["stat"] = 0
+
+            
     def loop(self):
         ip_version = IPVersion.V4Only
 
@@ -74,7 +102,7 @@ class BonjourDiscovery():
                 print("\nBrowsing services\n")
                 browser = ServiceBrowser(self.zeroconf, "_http._tcp.local.", handlers=[self.on_service_state_change])
                 sleep(120)
-                self.removePrinters()
+                #self.removePrinters()
                 self.zeroconf.close()
                 sleep(10)
                 

@@ -22,11 +22,13 @@ def home():
 # A route that returns json list of printers. (Does not work on wiki)
 @app.route('/api', methods=['GET'])
 def api_all():
+    BD.checkPrinterStatus()
     return jsonify(BD.printers)
     
 # A route that returns javascript table of printers. (for wiki)
 @app.route('/api/data.js')
 def jsData():
+    BD.checkPrinterStatus()
     #create new js file with current data
     with open('data.js', 'w') as outfile:
         #write header
