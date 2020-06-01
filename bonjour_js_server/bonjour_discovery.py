@@ -43,19 +43,21 @@ class BonjourDiscovery():
                         version = info.properties[b'version'].decode('UTF-8')
                         #add printers to dictionary
                         printerInfo = {"address": addresses[0], "stat": -1, "port": port[0], "series": series, "version": version}
-                        self.services[name] = hostname
+                        #self.services[name] = hostname
+                        self.services[name] = info
                         self.printers[hostname] = printerInfo
                         #print data
                         print("{}: {} at {}".format(state_change, hostname, addresses))
-                        print("    Hardware Series:{}".format(series))
-                        print("    Hardware Version:{}".format(version))
-                        self.checkPrinterStatus()
+                        #print("    Hardware Series:{}".format(series))
+                        #print("    Hardware Version:{}".format(version))
+                        #self.checkPrinterStatus()
                 except KeyError:
                     pass
                         
         elif state_change is ServiceStateChange.Removed:
             try:
-                hostname = self.services[name]
+                #hostname = self.services[name]
+                hostname = self.services[name].properties[b'name'].decode('UTF-8')
                 del self.printers[hostname]
                 del self.services[name]
                 print("Removed: {}".format(hostname))
@@ -63,9 +65,9 @@ class BonjourDiscovery():
                 pass
                 
     def removePrinters(self):
-        for key in list(self.services):
-            info = self.zeroconf.get_service_info("_http._tcp.local.", key)
-            self.zeroconf.unregister_service(info)
+        self.zeroconf.unregister_all_services()
+        self.printers.clear()
+        self.services.clear()
             
     def checkPrinterStatus(self):
         for printer in list(self.printers):
@@ -94,17 +96,18 @@ class BonjourDiscovery():
             
     def loop(self):
         ip_version = IPVersion.V4Only
-
         try:
             while True:
                 self.zeroconf = Zeroconf(ip_version=ip_version)
 
                 print("\nBrowsing services\n")
                 browser = ServiceBrowser(self.zeroconf, "_http._tcp.local.", handlers=[self.on_service_state_change])
-                sleep(120)
+                sleep(55)
+                #for service in list(self.services):
+                #    print("Reload {} {}".format(self.services[service].properties[b'name'].decode('UTF-8'), self.services[service].request(self.zeroconf, 5000)))
                 #self.removePrinters()
                 self.zeroconf.close()
-                sleep(10)
+                sleep(5)
                 
         except KeyboardInterrupt:
             pass

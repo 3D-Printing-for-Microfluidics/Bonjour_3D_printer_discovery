@@ -5,6 +5,9 @@ import flask
 from flask import request, jsonify
 from bonjour_discovery import BonjourDiscovery
 import json
+#from time import sleep
+
+#sleep(10)
 
 #create flask server
 app = flask.Flask(__name__, static_url_path='', static_folder='')
@@ -21,13 +24,19 @@ def home():
 
 # A route that returns json list of printers. (Does not work on wiki)
 @app.route('/api', methods=['GET'])
-def api_all():
+def api_json():
     BD.checkPrinterStatus()
     return jsonify(BD.printers)
     
+# A route that returns json list of printers. (Does not work on wiki)
+@app.route('/api/flush', methods=['GET'])
+def api_flush():
+    BD.removePrinters()
+    return "Printers flushed"
+    
 # A route that returns javascript table of printers. (for wiki)
 @app.route('/api/data.js')
-def jsData():
+def api_js():
     BD.checkPrinterStatus()
     #create new js file with current data
     with open('data.js', 'w') as outfile:

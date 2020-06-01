@@ -7,6 +7,9 @@ echo $PROJECT_ROOT
 #install prereqs
 pip3 install zeroconf
 pip3 install flask
+pip3 install pyopenssl
+
+sudo rm /etc/systemd/system/bonjour_server.service
 
 #add create script service
 sudo echo "[Unit]"                                      >> /etc/systemd/system/bonjour_server.service

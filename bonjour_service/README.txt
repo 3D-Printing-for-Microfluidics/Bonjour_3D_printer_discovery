@@ -1,5 +1,5 @@
 
-bonjour_service broadcasts this devices IP address, hostname, and hardware type as a mDNS device. The broadcast type is _http._tcp.local. with a type property of nordinbeacon.
+bonjour_service broadcasts this devices IP address, hostname, and hardware type as a mDNS device. The broadcast type is _http._tcp.local. with a type property of nordinbeacon2.
 
 To install:
 

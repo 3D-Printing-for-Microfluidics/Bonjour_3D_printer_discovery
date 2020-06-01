@@ -41,7 +41,7 @@ class IPBroadcaster():
 
         return ServiceInfo(
             "_http._tcp.local.",
-            "{}._http._tcp.local.".format(self.hostname),
+            "{}beacon._http._tcp.local.".format(self.hostname),
             addresses=[socket.inet_aton(self.ip_address)],
             port=5000,
             properties=desc,
@@ -60,6 +60,7 @@ class IPBroadcaster():
         try:
             self.zeroconf.register_service(self.service)
         except NonUniqueNameException:
+            self.zeroconf.unregister_all_services()
             print("Nonunique-error")
 
 #start broadcast

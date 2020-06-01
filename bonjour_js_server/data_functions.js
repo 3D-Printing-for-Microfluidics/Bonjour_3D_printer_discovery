@@ -14,7 +14,7 @@ function populateTable(jsonObj) {
     text.textContent = count + " printer(s) were found.";
     header.appendChild(text);
     
-    //create table headders
+    //create table headers
     headerRow = document.createElement('tr');
     header1 = document.createElement('th');
     header2 = document.createElement('th');
@@ -23,6 +23,7 @@ function populateTable(jsonObj) {
     header5 = document.createElement('th');
     header6 = document.createElement('th');
     
+    //add text to table headers
     header1.textContent = "Status"
     header2.textContent = "Host";
     header3.textContent = "IP Address";
@@ -30,6 +31,7 @@ function populateTable(jsonObj) {
     header5.textContent = "Series";
     header6.textContent = "Version";
     
+    //add table headers
     headerRow.appendChild(header1);
     headerRow.appendChild(header2);
     headerRow.appendChild(header3);
@@ -38,7 +40,7 @@ function populateTable(jsonObj) {
     headerRow.appendChild(header6);
     table.appendChild(headerRow);
     
-
+    //loop through all printer listings
     for(const object in jsonObj) {
         //create table columns
         row = document.createElement('tr');
@@ -81,14 +83,16 @@ function populateTable(jsonObj) {
             icon.style = "font-size: 16px; float:right;";
             icon.textContent = '\u2610';
         }
-        col1.appendChild(icon);
         
+        //set column contents
+        col1.appendChild(icon);
         col2.textContent = object;
         col3.appendChild(a);
         col4.textContent = temp.port;
         col5.textContent = temp.series;
         col6.textContent = temp.version;
         
+        //add entry to table
         row.appendChild(col1);
         row.appendChild(col2);
         row.appendChild(col3);
@@ -96,6 +100,39 @@ function populateTable(jsonObj) {
         row.appendChild(col5);
         row.appendChild(col6);
         table.appendChild(row);
+    }
+    
+    //sort table
+    var rows, switching, i, x, y, shouldSwitch;
+    switching = true;
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+         first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[1];
+            y = rows[i + 1].getElementsByTagName("TD")[1];
+            // Check if the two rows should switch place:
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                // If so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+            }
+        }
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
     }
 }
 populateTable(printers);

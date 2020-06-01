@@ -7,6 +7,8 @@ echo $PROJECT_ROOT
 #install prereqs
 pip3 install zeroconf
 
+sudo rm /etc/systemd/system/bonjour_service.service
+
 #add create script service
 sudo echo "[Unit]"                                      >> /etc/systemd/system/bonjour_service.service
 sudo echo "Description=Broadcasts this devices IP address, hostname, and hardware type as a mDNS device."

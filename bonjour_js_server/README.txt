@@ -1,5 +1,5 @@
 
-bonjour_js_server detects all nordinbeacon bonjor_services. It then exposes a web api that can be used to display or utilize that information.
+bonjour_js_server detects all nordinbeacon2 bonjor_services. It then exposes a web api that can be used to display or utilize that information.
 To install:
 
 1) Open terminal in this directory.
