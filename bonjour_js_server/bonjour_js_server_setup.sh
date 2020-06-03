@@ -15,7 +15,7 @@ sudo rm /etc/systemd/system/bonjour_server.service
 sudo echo "[Unit]"                                      >> /etc/systemd/system/bonjour_server.service
 sudo echo "Description=API Server exposing javascript and json with printer IP addresses"
                                                         >> /etc/systemd/system/bonjour_server.service
-sudo echo "After=network.target"                        >> /etc/systemd/system/bonjour_server.service
+sudo echo "After=syslog.target network.target electrum.service"                        >> /etc/systemd/system/bonjour_server.service
 
 sudo echo "[Service]"                                   >> /etc/systemd/system/bonjour_server.service
 sudo echo "ExecStart=/usr/bin/python3 -u server.py"     >> /etc/systemd/system/bonjour_server.service

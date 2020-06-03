@@ -38,6 +38,7 @@ def api_flush():
 @app.route('/api/data.js')
 def api_js():
     BD.checkPrinterStatus()
+    BD.checkDeviceStatus()
     #create new js file with current data
     with open('data.js', 'w') as outfile:
         #write header
@@ -45,13 +46,20 @@ def api_js():
         #write json data
         outfile.write(json.dumps(BD.printers))
         outfile.write("\r\n")
+        #write header
+        outfile.write("devices = ")
+        #write json data
+        outfile.write(json.dumps(BD.devices))
+        outfile.write("\r\n")
         #write the rest of the functions
         with open('data_functions.js') as infile:
             outfile.write(infile.read())
     return app.send_static_file('data.js')
     
 #start printer discovery
-threading.Thread(target=BD.loop).start()
+service_thread = threading.Thread(target=BD.loop)
+service_thread.daemon = True
+service_thread.start()
 
 #app.run(host='0.0.0.0', port=5000) #http server
 

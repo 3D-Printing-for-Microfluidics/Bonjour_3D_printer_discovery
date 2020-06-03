@@ -1,7 +1,19 @@
-table = document.querySelector('table');
-header = document.querySelector('header');
+//table = document.querySelector('table');
+printer_table = document.getElementById('printers');
+device_table = document.getElementById('devices');
 
-function populateTable(jsonObj) {
+printer_header = document.getElementById('printers_header');
+device_header = document.getElementById('devices_header');
+
+//header1 = document.querySelector('header');
+//header2 = document.querySelector('p');
+
+function populateTable(table, header, is_printer, jsonObj) {
+    
+    var jsonName = "printer";
+    if(!is_printer){
+        jsonName = "device";
+    }
     
     var count = 0;
     
@@ -11,7 +23,7 @@ function populateTable(jsonObj) {
     
     //create header
     text = document.createElement('p');
-    text.textContent = count + " printer(s) were found.";
+    text.textContent = count + " " + jsonName + "(s) were found.";
     header.appendChild(text);
     
     //create table headers
@@ -35,7 +47,9 @@ function populateTable(jsonObj) {
     headerRow.appendChild(header1);
     headerRow.appendChild(header2);
     headerRow.appendChild(header3);
-    headerRow.appendChild(header4);
+    if(is_printer){
+        headerRow.appendChild(header4);
+    }
     headerRow.appendChild(header5);
     headerRow.appendChild(header6);
     table.appendChild(headerRow);
@@ -87,7 +101,12 @@ function populateTable(jsonObj) {
         //set column contents
         col1.appendChild(icon);
         col2.textContent = object;
-        col3.appendChild(a);
+        if(is_printer){
+            col3.appendChild(a);
+        }
+        else{
+            col3.textContent = temp.address;
+        }
         col4.textContent = temp.port;
         col5.textContent = temp.series;
         col6.textContent = temp.version;
@@ -96,7 +115,9 @@ function populateTable(jsonObj) {
         row.appendChild(col1);
         row.appendChild(col2);
         row.appendChild(col3);
-        row.appendChild(col4);
+        if(is_printer){
+            row.appendChild(col4);
+        }
         row.appendChild(col5);
         row.appendChild(col6);
         table.appendChild(row);
@@ -135,4 +156,5 @@ function populateTable(jsonObj) {
         }
     }
 }
-populateTable(printers);
+populateTable(printer_table, printer_header, true, printers);
+populateTable(device_table, device_header, false, devices);

@@ -11,6 +11,7 @@ import struct
 
 HARDWARE_SERIES = "HR"
 HARDWARE_VERSION = "3.3"
+IS_PRINTER = True
 
 def get_ip_address():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -37,7 +38,12 @@ class IPBroadcaster():
         self.hostname = socket.gethostname()
         self.ip_address = get_ip_address()
 
-        desc = {'type': 'nordinbeacon', 'name': self.hostname, 'series': HARDWARE_SERIES, 'version': HARDWARE_VERSION}
+        type = ''
+        if IS_PRINTER:
+            type = 'nordin_printer'
+        else:
+            type = 'nordin_device'
+        desc = {'type': type, 'name': self.hostname, 'series': HARDWARE_SERIES, 'version': HARDWARE_VERSION}
 
         return ServiceInfo(
             "_http._tcp.local.",
